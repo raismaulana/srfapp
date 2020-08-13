@@ -1,0 +1,92 @@
+{% extends "petugas/base.html" %}
+
+{% block head %} {% endblock head %}
+
+{% block content %}
+<div class="login-box">
+  
+  <div class="card">
+    <div class="card-body login-card-body">
+      <h2 class="login-box-msg">Log In</h2>
+      {% for message in messages %}
+
+      <div class="alert alert-danger">
+          <a class="close" href="#" data-dismiss="alert"><i class="far fa-times-circle"></i></a>
+
+          {{ message }}
+
+      </div>
+            {% endfor %}
+      <form id="loginForm" method="POST">
+        {% csrf_token %}
+        <div class="form-group">
+          <div class="input-group mb-3">
+            <input type="text" name="username" class="form-control" placeholder="Username" >
+            <div class="input-group-append">
+              <div class="input-group-text">
+                <span class="fas fa-user"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="input-group mb-3">
+            <input type="password" name="password" class="form-control" placeholder="Password">
+            <div class="input-group-append">
+              <div class="input-group-text">
+                <span class="fas fa-lock"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+          <!-- /.col -->
+          <div >
+            <button type="submit" class="btn btn-primary btn-block">Masuk</button>
+          </div>
+          <!-- /.col -->
+        </div>
+      </form>
+      </p>
+    </div>
+    <!-- /.login-card-body -->
+  </div>
+</div>
+<!-- /.login-box -->
+
+{% endblock content %}
+
+{% block script %} 
+
+<script type="text/javascript">
+  $('#loginForm').validate({
+    rules: {
+      username: {
+        required: true,
+      },
+      password: {
+        required: true,
+      },
+    },
+    messages: {
+      username: {
+        required: "Masukkan username Anda"
+      },
+      password: {
+        required: "Masukkan password Anda"
+      },
+    },
+    errorElement: 'span',
+    errorPlacement: function (error, element) {
+      error.addClass('invalid-feedback');
+      element.closest('.form-group').append(error);
+    },
+    highlight: function (element, errorClass, validClass) {
+      $(element).addClass('is-invalid');
+    },
+    unhighlight: function (element, errorClass, validClass) {
+      $(element).removeClass('is-invalid');
+    }
+  });
+</script>
+
+{% endblock script %}

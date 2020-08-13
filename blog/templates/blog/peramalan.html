@@ -1,0 +1,278 @@
+{% extends 'blog/base.html' %}
+{% load static %}
+{% block main %}
+
+				<!-- Main -->
+					<div id="main">
+						<div class="inner">
+
+							<!-- Header -->
+								<header id="header">
+									<a href="javascript:void(0)" class="logo"><strong>RMSE:</strong> <span id="span-rmse">????</span></a> 
+									<span class="logo"><strong>Tanggal</strong> <span id="span-tanggal" style="margin-right: 2vw;">????</span> 
+									<a class="button primary icon solid fa-search small" data-toggle="modal" data-target="#Modal_Tambah">Cari</a></span> 
+								</header>
+
+							<!-- Banner -->
+							<canvas id="myChart"></canvas>
+						</div>
+					</div>
+
+	<!-- /.modal -->
+      	<div class="modal" tabindex="-1" role="dialog" id="Modal_Tambah">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+			<div class="modal-header">
+				<h3 class="modal-title">Pilih Berdasarkan Tanggal</h3>
+				<button type="button" class="button small" data-dismiss="modal" aria-label="Close">
+				<span aria-hidden="true">X</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<input type="text" name="daterange" id="input_tanggal" value="01-01-2017 s/d 31-12-2019" />
+			</div>
+			<div class="modal-footer">
+				<a type="button" id="cari" data-dismiss="modal" class="button primary small">Cari</a>
+			</div>
+			</div>
+		</div>
+		</div>
+    <!-- /.modal -->
+{% endblock main %}
+
+{% block script %}
+
+<script src="{% static 'blog/Chart.js' %}"></script>
+<script>
+
+const config = {
+  type: "line",
+  data: {
+    labels: [],
+    datasets: [{
+      data: [], // Set initially to empty data
+      label: "Prediksi",
+      backgroundColor: [
+      ],
+	  borderWidth: 1
+    },
+	{
+	  data: [], // Set initially to empty data
+      label: "Aktual",
+      backgroundColor: [
+      ],
+	  borderWidth: 1
+	}]
+  },
+  options: {
+    scales: {
+      yAxes: [{
+        ticks: {
+            beginAtZero: true
+        }
+      }]
+    },
+	title: {
+		display: 'true',
+		text: ['Prediksi Radiasi Matahari Harian ', 'Sta. Met. Kelas III Banyuwangi'],
+		fontSize: 24,
+	},
+	tooltips: {
+		callbacks: {
+		label: (item) => `${item.yLabel} kWh/m\u00B2/hari`,
+		},
+		mode: 'index'
+	},
+	legend: {
+		align: 'end'
+	},
+	elements: {
+		point:{
+			radius: 0
+		}
+	}
+
+  }
+};
+
+const ctx = document.getElementById('myChart').getContext("2d");
+const myChart = new Chart(ctx, config);
+
+
+
+$.ajax({
+    url: "{% url 'forecasts' %}",
+    type: "GET",
+    dataType: 'JSON',
+    success: function(response) {
+		const data = response.data_actual;
+		const data1 = response.data_prediction;
+		const rmse = response.rmse;
+		last_index = Object.keys(data1).length - 1
+		
+		let radiasi = [];
+		let tanggal = [];
+		let bgColor = [];
+		let bdColor = [];
+		for(i in data){
+			tanggal.push(data[i].tanggal);
+			radiasi.push(data[i].radiasi);
+			bgColor.push('rgba(0,184,255, 0)');
+			bdColor.push('rgba(0,184,255, 1)');
+		}
+		let radiasi1 = [];
+		let tanggal1 = [];
+		let bgColor1 = [];
+		let bdColor1 = [];
+		for(i in data1){
+			tanggal1.push(data1[i].tanggal);
+			radiasi1.push(data1[i].radiasi);
+			bgColor1.push('rgba(251,152,0, 0)');
+			bdColor1.push('rgba(251,152,0, 1)');
+		}
+
+        myChart.data.labels = tanggal;
+        myChart.data.datasets[1].data = radiasi;
+        myChart.data.datasets[1].backgroundColor = bgColor;
+        myChart.data.datasets[1].borderColor = bdColor;
+
+        myChart.data.labels = tanggal1;
+        myChart.data.datasets[0].data = radiasi1;
+        myChart.data.datasets[0].backgroundColor = bgColor1;
+        myChart.data.datasets[0].borderColor = bdColor1;
+
+        myChart.update();
+		document.getElementById("span-rmse").textContent=rmse;
+		document.getElementById("span-tanggal").textContent=data1[0].tanggal+" s/d "+data1[last_index].tanggal;
+    }
+})
+
+$(function() {
+  $('input[name="daterange"]').daterangepicker({
+	minDate: "01-01-2017",
+	maxDate: "31-12-2019",
+    opens: 'left',
+	"locale": {
+        "format": "DD-MM-YYYY",
+        "separator": " s/d ",
+        "applyLabel": "Terapkan",
+        "cancelLabel": "Batal",
+        "fromLabel": "Dari",
+        "toLabel": "s/d",
+        "customRangeLabel": "Custom",
+        "daysOfWeek": [
+            "M",
+            "S",
+            "S",
+            "R",
+            "K",
+            "J",
+            "S"
+        ],
+        "monthNames": [
+            "Januari",
+            "Februari",
+            "Maret",
+            "April",
+            "Mei",
+            "Juni",
+            "Juli",
+            "Augustus",
+            "September",
+            "Oktober",
+            "November",
+            "Desember"
+        ],
+        "firstDay": 1,
+    }
+  }, function(start, end, label) {
+    console.log("A new date selection was made: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
+  });
+});
+
+$('#cari').on('click', function() {
+	$.ajax({
+		url: "{% url 'forecasts-filter' %}?tanggal="+$('#input_tanggal').val(),
+		type: "GET",
+		dataType: 'JSON',
+		success: function(response) {
+			const data = response.data_actual;
+			const data1 = response.data_prediction;
+			const rmse = response.rmse;
+			len_data = Object.keys(data1).length
+			last_index = len_data - 1
+
+			let radiasi = [];
+			let tanggal = [];
+			let bgColor = [];
+			let bdColor = [];
+			
+			let radiasi1 = [];
+			let tanggal1 = [];
+			let bgColor1 = [];
+			let bdColor1 = [];
+
+			if(len_data == 1){
+				radiasi.push(null);
+				radiasi1.push(null);
+				tanggal.push('');
+				tanggal1.push('');
+				bgColor.push('rgba(0,184,255, 0)');
+				bdColor.push('rgba(0,184,255, 1)');
+				bgColor1.push('rgba(251,152,0, 0)');
+				bdColor1.push('rgba(251,152,0, 1)');
+			}
+
+			for(i in data){
+				tanggal.push(data[i].tanggal);
+				radiasi.push(data[i].radiasi);
+				bgColor.push('rgba(0,184,255, 0)');
+				bdColor.push('rgba(0,184,255, 1)');
+			}
+
+			for(i in data1){
+				tanggal1.push(data1[i].tanggal);
+				radiasi1.push(data1[i].radiasi);
+				bgColor1.push('rgba(251,152,0, 0)');
+				bdColor1.push('rgba(251,152,0, 1)');
+			}
+
+			if(len_data == 1){
+				tanggal.push('');
+				radiasi.push(null);
+				radiasi1.push(null);
+				tanggal1.push('');
+				bgColor.push('rgba(0,184,255, 0)');
+				bdColor.push('rgba(0,184,255, 1)');
+				bgColor1.push('rgba(251,152,0, 0)');
+				bdColor1.push('rgba(251,152,0, 1)');
+			}
+
+			myChart.options.elements.point.radius = 1;
+			if(len_data <=100) {
+				myChart.options.elements.point.radius = 3;
+			}
+
+			myChart.data.labels = tanggal;
+			myChart.data.datasets[1].data = radiasi;
+			myChart.data.datasets[1].backgroundColor = bgColor;
+			myChart.data.datasets[1].borderColor = bdColor;
+
+			myChart.data.labels = tanggal1;
+			myChart.data.datasets[0].data = radiasi1;
+			myChart.data.datasets[0].backgroundColor = bgColor1;
+			myChart.data.datasets[0].borderColor = bdColor1;
+
+			myChart.update();
+			document.getElementById("span-rmse").textContent=rmse;
+			document.getElementById("span-tanggal").textContent=data1[0].tanggal+" s/d "+data1[last_index].tanggal;
+		}
+	})
+})
+</script>
+
+{% endblock script %}
+
+
+
+

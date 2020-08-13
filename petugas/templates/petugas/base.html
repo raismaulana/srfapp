@@ -1,0 +1,64 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% if title %}
+    <title>SRFApp - {{ title }} </title>
+    {% else %}
+    <title>SRFApp</title>
+    {% endif %}
+      
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="{% static 'petugas/plugins/fontawesome-free/css/all.min.css' %}">
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <!-- Tempusdominus Bbootstrap 4 -->
+    <link rel="stylesheet" href="{% static 'petugas/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css' %}">
+    <!-- daterange picker -->
+    <link rel="stylesheet" href="{% static 'petugas/plugins/daterangepicker/daterangepicker.css' %}">
+    <!-- DataTables -->
+    <link rel="stylesheet" href="{% static 'petugas/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css' %}">
+    <link rel="stylesheet" href="{% static 'petugas/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %} ">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="{% static 'petugas/dist/css/adminlte.min.css' %}">
+    <!-- overlayScrollbars -->
+    <link rel="stylesheet" href="{% static 'petugas/dist/css/adminlte.min.css' %}">
+    <!-- Google Font: Source Sans Pro -->
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+
+    {% block head %} {% endblock %}
+</head>
+{% if user.is_authenticated %}
+<body class="hold-transition sidebar-mini">
+{% else %}
+<body class="hold-transition login-page">
+{% endif %}
+    {% block content %} {% endblock %}
+
+    
+    <!-- jQuery -->
+    <script src="{% static 'petugas/plugins/jquery/jquery.min.js' %}"></script>
+    <!-- Bootstrap 4 -->
+    <script src="{% static 'petugas/plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    <!-- jquery-validation -->
+    <script src="{% static 'petugas/plugins/jquery-validation/jquery.validate.min.js' %}"></script>
+    <script src="{% static 'petugas/plugins/jquery-validation/additional-methods.min.js' %}"></script>
+    <!-- InputMask -->
+    <script src="{% static 'petugas/plugins/moment/moment.min.js' %}"></script>
+    <script src="{% static 'petugas/plugins/inputmask/min/jquery.inputmask.bundle.min.js' %}"></script>
+    <!-- date-range-picker -->
+    <script src="{% static 'petugas/plugins/daterangepicker/daterangepicker.js' %}"></script>
+    <!-- Tempusdominus Bootstrap 4 -->
+    <script src="{% static 'petugas/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js' %}"></script>
+    <!-- DataTables -->
+    <script src="{% static 'petugas/plugins/datatables/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'petugas/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+    <script src="{% static 'petugas/plugins/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>
+    <script src="{% static 'petugas/plugins/datatables-responsive/js/responsive.bootstrap4.min.js' %}"></script>
+    <!-- AdminLTE App -->
+    <script src="{% static 'petugas/dist/js/adminlte.min.js' %}"></script>
+    {% block script %} {% endblock %}
+</body>
+</html>

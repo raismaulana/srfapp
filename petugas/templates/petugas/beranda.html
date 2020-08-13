@@ -1,0 +1,415 @@
+{% extends 'petugas/home.html' %}
+{% block isi %}
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1>Control Panel</h1>
+          </div>
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="javascript:void(0)">Beranda</a></li>
+              <li class="breadcrumb-item active">Control Panel</li>
+            </ol>
+          </div>
+        </div>
+      </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      {% for message in messages %}
+
+    
+      <div class="alert alert-{{message.extra_tags}}">
+          <a class="close" href="#" data-dismiss="alert"><i class="far fa-times-circle"></i></a>
+
+          {{ message }}
+
+      </div>
+      {% endfor %}
+      <!-- Default box -->
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">Tabel Data Radiasi</h3>
+            
+          <div class="card-tools">
+            <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
+              <i class="fas fa-minus"></i></button>
+            <button type="button" class="btn btn-tool" data-card-widget="remove" data-toggle="tooltip" title="Remove">
+              <i class="fas fa-times"></i></button>
+          </div>
+        </div>
+        <div class="card-body">
+          <div style="margin-bottom: 2vh;">
+            <a class="btn btn-success" style="color: wheat;" data-toggle="modal" data-target="#Modal_Tambah">Tambah Data Baru</a>
+          </div>
+          <table id="tabelRadiasi" class="table table-bordered table-hover table-striped">
+              <thead>
+                <tr>
+                  <th>Tanggal</th>
+                  <th>Radiasi</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="data_radiasi">
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th>Tanggal</th>
+                  <th>Radiasi</th>
+                  <th>Aksi</th>
+                </tr>
+              </tfoot>
+            </table>
+        </div>
+        <!-- /.card-body -->
+        <div class="card-footer">
+        </div>
+        <!-- /.card-footer-->
+      </div>
+      <!-- /.card -->
+
+      <!-- /.modal -->
+      <div class="modal fade" id="Modal_Tambah">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title">Tambah Data</h4>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <form action="{% url 'insertDataRadiasi' %}" id="formAddRadiasi" method="POST">
+              {% csrf_token %}
+                <!-- Date -->
+                <div class="form-group ">
+                  <label>{{ radiasiForm.tanggal.label }}:</label>
+                    <div class="input-group date" id="radiasidate" data-target-input="nearest">
+                        {{ radiasiForm.tanggal }}
+                        <div class="input-group-append" data-target="#radiasidate" data-toggle="datetimepicker">
+                            <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                  <label>{{ radiasiForm.radiasi.label }}(kWh/m<sup>2</sup>):</label>
+                    {{ radiasiForm.radiasi }}
+                    <div class="icheck-primary">
+                    <input type="checkbox" id="datakosong" class="datakosong">
+                    <label for="datakosong" class="datakosong">
+                      Data Radiasi Kosong? Tekan ini
+                    </label>
+                  </div>
+                </div>
+                <!-- /.form group -->
+            </div>
+            <div class="modal-footer justify-content-between">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
+              <button type="submit" class="btn btn-success">Simpan</button>
+            </form>
+            </div>
+          </div>
+          <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+      </div>
+      <!-- /.modal -->
+
+
+    <div class="modal fade" id="Modal_Edit">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title">Form Edit</h4>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <form action="{% url 'updateDataRadiasi' %}" id="formUpdateRadiasi" method="POST">
+              {% csrf_token %}
+                <!-- Date -->
+                <div class="form-group ">
+                <input type="hidden" name="update-pk" id="id_update-pk">
+                  <label>{{ updateRadiasiForm.tanggal.label }}:</label>
+                  <input type="text" name="update-tanggal" class="form-control datetimepicker-input" data-inputmask-alias="datetime" data-inputmask-inputformat="dd-MM-yyyy" data-mask required id="id_update-tanggal" readonly>
+                </div>
+                <div class="form-group">
+                  <label>{{ updateRadiasiForm.radiasi.label }}(kWh/m<sup>2</sup>):</label>
+                    {{ updateRadiasiForm.radiasi }}
+                    <div class="icheck-primary">
+                    <input type="checkbox" id="datakosongUpdate" class="datakosongUpdate">
+                    <label for="datakosongUpdate" class="datakosongUpdate">
+                      Data Radiasi Kosong? Tekan ini
+                    </label>
+                  </div>
+                </div>
+                <!-- /.form group -->
+            </div>
+            <div class="modal-footer justify-content-between">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
+              <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+              
+              </form>
+            </div>
+          </div>
+          <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+      </div>
+      <!-- /.modal -->
+
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+
+  <footer class="main-footer">
+    <div class="float-right d-none d-sm-block">
+      <b>Version</b> 3.0.5
+    </div>
+    <strong>Copyright &copy; 2014-2019 <a href="http://adminlte.io">AdminLTE.io</a>.</strong> All rights
+    reserved.
+  </footer>
+
+  
+
+  <!-- Control Sidebar -->
+  <aside class="control-sidebar control-sidebar-dark">
+    <!-- Control sidebar content goes here -->
+  </aside>
+  <!-- /.control-sidebar -->
+
+  
+{% endblock isi %}
+
+{% block script %}
+
+<script type="text/javascript">
+
+  $(function () {
+    if ($('#datakosong').is(':checked')) {
+        $('#id_radiasi').val('');
+        $('#id_radiasi').prop('readonly', true);
+        $('#id_radiasi').prop('required', false);
+    }
+    $('.datakosong').click(function() {
+      if ($('#datakosong').is(':checked')) {
+        $('#id_radiasi').val('');
+        $('#id_radiasi').prop('readonly', true);
+        $('#id_radiasi').prop('required', false);
+      } else {
+        $('#id_radiasi').val('');
+        $('#id_radiasi').prop('readonly', false);
+        $('#id_radiasi').prop('required', true);
+
+      }
+    });
+    $('.datakosongUpdate').click(function() {
+      if ($('#datakosongUpdate').is(':checked')) {
+        $('#id_update-radiasi').val('');
+        $('#id_update-radiasi').prop('readonly', true);
+      } else {
+        $('#id_update-radiasi').val('');
+        $('#id_update-radiasi').prop('readonly', false);
+      }
+    });
+    //Datemask dd/mm/yyyy
+    $('#datemask').inputmask('yyyy-MM-dd', { 'placeholder': 'dd-MM-yyyy' })
+    $('[data-mask]').inputmask()
+    //Date range picker
+    $('#radiasidate').datetimepicker({
+            autoclose: true,
+            format: 'DD-MM-Y',
+            maxDate: '{{ dateNow }}'
+    });
+
+    jQuery.validator.addMethod("validDate", function(value, element) {
+      const tgl = new Date(ChangeFormateDate($('#id_tanggal').val()));
+      const now = new Date();
+      if(tgl <= now){
+          return true;
+      }
+      return false;
+    }, "Tanggal tidak diizinkan");
+
+    $('#formAddRadiasi').validate({
+      rules: {
+        tanggal: {
+          required: true,
+          validDate: true
+        },
+        radiasi: {
+          required: function(element){
+            if ($('#datakosong').is(':checked')) {
+              return $("#id_radiasi").val()!="";
+            }
+            return true;
+          },
+        },
+      },
+      messages: {
+        tanggal: {
+          required: "Masukkan Tanggal",
+          validDate: "Tanggal tidak diizinkan"
+        },
+        radiasi: {
+          required: "Masukkan Radiasi"
+        },
+      },
+      errorElement: 'span',
+      errorPlacement: function (error, element) {
+        error.addClass('invalid-feedback');
+        element.closest('.form-group').append(error);
+      },
+      highlight: function (element, errorClass, validClass) {
+        $(element).addClass('is-invalid');
+      },
+      unhighlight: function (element, errorClass, validClass) {
+        $(element).removeClass('is-invalid');
+      }
+    });
+
+    $('#formUpdateRadiasi').validate({
+      rules: {
+        'update-tanggal': {
+          required: true,
+        },
+        'update-radiasi': {
+          required: function(element){
+            if ($('#datakosongUpdate').is(':checked')) {
+              return $("#id_update-radiasi").val()!="";
+            }
+            return true;
+          },
+        },
+      },
+      messages: {
+        'update-tanggal': {
+          required: "Masukkan Tanggal"
+        },
+        'update-radiasi': {
+          required: "Masukkan Radiasi"
+        },
+      },
+      errorElement: 'span',
+      errorPlacement: function (error, element) {
+        error.addClass('invalid-feedback');
+        element.closest('.form-group').append(error);
+      },
+      highlight: function (element, errorClass, validClass) {
+        $(element).addClass('is-invalid');
+      },
+      unhighlight: function (element, errorClass, validClass) {
+        $(element).removeClass('is-invalid');
+      }
+    });
+
+    var table = $('#tabelRadiasi').DataTable({
+      language: {
+        "sEmptyTable":   "Tidak ada data yang tersedia pada tabel ini",
+        "sProcessing":   "Sedang memproses...",
+        "sLengthMenu":   "Tampilkan _MENU_ entri",
+        "sZeroRecords":  "Tidak ditemukan data yang sesuai",
+        "sInfo":         "Menampilkan _START_ sampai _END_ dari _TOTAL_ entri",
+        "sInfoEmpty":    "Menampilkan 0 sampai 0 dari 0 entri",
+        "sInfoFiltered": "(disaring dari _MAX_ entri keseluruhan)",
+        "sInfoPostFix":  "",
+        "sSearch":       "Cari:",
+        "sUrl":          "",
+        "oPaginate": {
+            "sFirst":    "Pertama",
+            "sPrevious": "Sebelumnya",
+            "sNext":     "Selanjutnya",
+            "sLast":     "Terakhir"
+        }
+      },
+      processing: true,
+      ajax:{
+              url: "{% url 'apiGetDataRadiasi' %}",
+              type: 'GET',
+      },
+      columns: [
+          { "data": "tanggal"},
+          { "data": "radiasi",
+            render: function(data, type, row) {
+              if(!row.radiasi){
+                return 'Data Kosong';
+              }
+              return row.radiasi;
+            }
+          },
+          { "data": "pk",
+            render: function(data, type, row) {
+              return '<a href="javascript:void(0)" class="btn btn-info btn-sm item_edit" data-pk="'+ChangeFormateDate(row.pk)+'"data-toggle="modal" data-target="#Modal_Edit">Edit</a>';
+            },
+            "orderable": false,
+            "searchable": false,
+          },
+      ],
+      "order": [[ 0 , "desc" ]]
+    });
+
+    function ChangeFormateDate(oldDate)
+    {   
+      return oldDate.toString().split("-").reverse().join("-");
+    }
+
+    
+    $('#data_radiasi').on('click', '.item_edit', function() {
+      $.ajax({
+        url: "{% url 'apiGetDataRadiasiId' %}?pk="+$(this).data('pk'),
+        type: "GET",
+        dataType: 'JSON',
+        success: function(response) {
+          const data = response.data;
+          console.log(data[0]);
+          $('[id="id_update-pk"]').val(data[0].pk);
+          $('[id="id_update-tanggal"]').val(data[0].tanggal.toString().split("-").reverse().join("-"));
+          if (!data[0].radiasi){
+            $('#datakosongUpdate').prop('checked', true);
+            $('#id_update-radiasi').prop('readonly', true);
+          } else {
+            $('#datakosongUpdate').prop('checked', false);
+            $('#id_update-radiasi').prop('readonly', false);
+          }
+          $('[id="id_update-radiasi"]').val(data[0].radiasi);
+        }
+      })
+    });
+
+    $('#messagedjango').on('click', function() {
+      $.ajax({
+        url: "{% url 'apiGetDataRadiasiId' %}?pk="+$(this).data('pk'),
+        type: "GET",
+        dataType: 'JSON',
+        success: function(response) {
+          const data = response.data;
+          console.log(data[0]);
+          $('[id="id_update-pk"]').val(data[0].pk);
+          $('[id="id_update-tanggal"]').val(data[0].tanggal.toString().split("-").reverse().join("-"));
+          if (!data[0].radiasi){
+            $('#datakosongUpdate').prop('checked', true);
+            $('#id_update-radiasi').prop('readonly', true);
+            $('[id="id_update-radiasi"]').val(data[0].radiasi);
+            
+          } else {
+            $('[id="id_update-radiasi"]').val(data[0].radiasi);
+          }
+        }
+      })
+    });
+
+  })
+
+
+</script>
+
+{% endblock script %}
+
