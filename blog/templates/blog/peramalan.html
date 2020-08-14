@@ -8,36 +8,38 @@
 
 							<!-- Header -->
 								<header id="header">
-									<a href="javascript:void(0)" class="logo"><strong>RMSE:</strong> <span id="span-rmse">????</span></a> 
-									<span class="logo"><strong>Tanggal</strong> <span id="span-tanggal" style="margin-right: 2vw;">????</span> 
+									<a href="javascript:void(0)" class="logo"><strong>RMSE:</strong> <span id="span-rmse">Memuat...</span></a> 
+									<span class="logo"><strong>Tanggal: </strong> <span id="span-tanggal" style="margin-right: 2vw;">Memuat...</span> 
 									<a class="button primary icon solid fa-search small" data-toggle="modal" data-target="#Modal_Tambah">Cari</a></span> 
 								</header>
 
 							<!-- Banner -->
-							<canvas id="myChart"></canvas>
+							<div>
+								<canvas id="myChart" ></canvas>
+							</div>
 						</div>
 					</div>
-
-	<!-- /.modal -->
-      	<div class="modal" tabindex="-1" role="dialog" id="Modal_Tambah">
-		<div class="modal-dialog" role="document">
-			<div class="modal-content">
-			<div class="modal-header">
-				<h3 class="modal-title">Pilih Berdasarkan Tanggal</h3>
-				<button type="button" class="button small" data-dismiss="modal" aria-label="Close">
-				<span aria-hidden="true">X</span>
-				</button>
-			</div>
-			<div class="modal-body">
-				<input type="text" name="daterange" id="input_tanggal" value="01-01-2017 s/d 31-12-2019" />
-			</div>
-			<div class="modal-footer">
-				<a type="button" id="cari" data-dismiss="modal" class="button primary small">Cari</a>
-			</div>
-			</div>
-		</div>
-		</div>
-    <!-- /.modal -->
+					
+				<!-- /.modal -->
+					<div class="modal" tabindex="-1" role="dialog" id="Modal_Tambah">
+						<div class="modal-dialog" role="document">
+							<div class="modal-content">
+							<div class="modal-header">
+								<h3 class="modal-title">Pilih Berdasarkan Tanggal</h3>
+								<button type="button" class="button small" data-dismiss="modal" aria-label="Close">
+								<span aria-hidden="true">X</span>
+								</button>
+							</div>
+							<div class="modal-body">
+								<input type="text" name="daterange" id="input_tanggal" value="01-01-2017 s/d 31-12-2019" />
+							</div>
+							<div class="modal-footer">
+								<a type="button" id="cari" data-dismiss="modal" class="button primary small">Cari</a>
+							</div>
+							</div>
+						</div>
+					</div>
+				<!-- /.modal -->
 {% endblock main %}
 
 {% block script %}
@@ -90,13 +92,13 @@ const config = {
 		point:{
 			radius: 0
 		}
-	}
+	},
 
   }
 };
 
 const ctx = document.getElementById('myChart').getContext("2d");
-const myChart = new Chart(ctx, config);
+let myChart = new Chart(ctx, config);
 
 
 
@@ -191,6 +193,16 @@ $(function() {
 });
 
 $('#cari').on('click', function() {
+	document.getElementById("span-rmse").textContent='Memuat...';
+	document.getElementById("span-tanggal").textContent='Memuat...';
+	myChart.data.labels = null;
+	myChart.data.datasets[1].data = null;
+	myChart.data.datasets[1].backgroundColor = null;
+	myChart.data.datasets[1].borderColor = null;
+	myChart.data.datasets[0].data = null;
+	myChart.data.datasets[0].backgroundColor = null;
+	myChart.data.datasets[0].borderColor = null;
+	myChart.update()
 	$.ajax({
 		url: "{% url 'forecasts-filter' %}?tanggal="+$('#input_tanggal').val(),
 		type: "GET",
@@ -251,6 +263,9 @@ $('#cari').on('click', function() {
 			myChart.options.elements.point.radius = 1;
 			if(len_data <=100) {
 				myChart.options.elements.point.radius = 3;
+			}
+			if(len_data >547) {
+				myChart.options.elements.point.radius = 0;
 			}
 
 			myChart.data.labels = tanggal;

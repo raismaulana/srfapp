@@ -96,8 +96,8 @@ def apiForecastsFilter(request):
     return HttpResponse(json.dumps(res, cls=DecimalEncoder), content_type='application/json;charset=utf-8')
 
 def dump_prediksi(request):
-    scaler = load(os_join(BASE_DIR, "static/scaler.gz"))
-    md19 = load_model(os_join(BASE_DIR, "static/MD19.h5"))
+    scaler = load(os_join(BASE_DIR, "staticfiles/scaler.gz"))
+    md19 = load_model(os_join(BASE_DIR, "staticfiles/MD19.h5"))
     radiasi = Radiasi.objects.filter(tanggal__range=('2016-12-16', '2019-12-31')).order_by('tanggal')
 
     list_radiasi = []
