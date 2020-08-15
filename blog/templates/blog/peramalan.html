@@ -54,15 +54,13 @@ const config = {
     datasets: [{
       data: [], // Set initially to empty data
       label: "Prediksi",
-      backgroundColor: [
-      ],
+      backgroundColor: null,
 	  borderWidth: 1
     },
 	{
 	  data: [], // Set initially to empty data
       label: "Aktual",
-      backgroundColor: [
-      ],
+      backgroundColor: null,
 	  borderWidth: 1
 	}]
   },
@@ -114,34 +112,26 @@ $.ajax({
 		
 		let radiasi = [];
 		let tanggal = [];
-		let bgColor = [];
-		let bdColor = [];
 		for(i in data){
 			tanggal.push(data[i].tanggal);
 			radiasi.push(data[i].radiasi);
-			bgColor.push('rgba(0,184,255, 0)');
-			bdColor.push('rgba(0,184,255, 1)');
 		}
 		let radiasi1 = [];
 		let tanggal1 = [];
-		let bgColor1 = [];
-		let bdColor1 = [];
 		for(i in data1){
 			tanggal1.push(data1[i].tanggal);
 			radiasi1.push(data1[i].radiasi);
-			bgColor1.push('rgba(251,152,0, 0)');
-			bdColor1.push('rgba(251,152,0, 1)');
 		}
 
         myChart.data.labels = tanggal;
         myChart.data.datasets[1].data = radiasi;
-        myChart.data.datasets[1].backgroundColor = bgColor;
-        myChart.data.datasets[1].borderColor = bdColor;
+        myChart.data.datasets[1].backgroundColor = 'rgba(0,184,255, 0)';
+        myChart.data.datasets[1].borderColor = 'rgba(0,184,255, 1)';
 
         myChart.data.labels = tanggal1;
         myChart.data.datasets[0].data = radiasi1;
-        myChart.data.datasets[0].backgroundColor = bgColor1;
-        myChart.data.datasets[0].borderColor = bdColor1;
+        myChart.data.datasets[0].backgroundColor = 'rgba(251,152,0, 0)';
+        myChart.data.datasets[0].borderColor = 'rgba(251,152,0, 1)';
 
         myChart.update();
 		document.getElementById("span-rmse").textContent=rmse;
@@ -187,8 +177,6 @@ $(function() {
         ],
         "firstDay": 1,
     }
-  }, function(start, end, label) {
-    console.log("A new date selection was made: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
   });
 });
 
@@ -216,37 +204,25 @@ $('#cari').on('click', function() {
 
 			let radiasi = [];
 			let tanggal = [];
-			let bgColor = [];
-			let bdColor = [];
 			
 			let radiasi1 = [];
 			let tanggal1 = [];
-			let bgColor1 = [];
-			let bdColor1 = [];
 
 			if(len_data == 1){
 				radiasi.push(null);
 				radiasi1.push(null);
 				tanggal.push('');
 				tanggal1.push('');
-				bgColor.push('rgba(0,184,255, 0)');
-				bdColor.push('rgba(0,184,255, 1)');
-				bgColor1.push('rgba(251,152,0, 0)');
-				bdColor1.push('rgba(251,152,0, 1)');
 			}
 
 			for(i in data){
 				tanggal.push(data[i].tanggal);
 				radiasi.push(data[i].radiasi);
-				bgColor.push('rgba(0,184,255, 0)');
-				bdColor.push('rgba(0,184,255, 1)');
 			}
 
 			for(i in data1){
 				tanggal1.push(data1[i].tanggal);
 				radiasi1.push(data1[i].radiasi);
-				bgColor1.push('rgba(251,152,0, 0)');
-				bdColor1.push('rgba(251,152,0, 1)');
 			}
 
 			if(len_data == 1){
@@ -254,10 +230,6 @@ $('#cari').on('click', function() {
 				radiasi.push(null);
 				radiasi1.push(null);
 				tanggal1.push('');
-				bgColor.push('rgba(0,184,255, 0)');
-				bdColor.push('rgba(0,184,255, 1)');
-				bgColor1.push('rgba(251,152,0, 0)');
-				bdColor1.push('rgba(251,152,0, 1)');
 			}
 
 			myChart.options.elements.point.radius = 1;
@@ -270,13 +242,13 @@ $('#cari').on('click', function() {
 
 			myChart.data.labels = tanggal;
 			myChart.data.datasets[1].data = radiasi;
-			myChart.data.datasets[1].backgroundColor = bgColor;
-			myChart.data.datasets[1].borderColor = bdColor;
+			myChart.data.datasets[1].backgroundColor = 'rgba(0,184,255, 0)';
+			myChart.data.datasets[1].borderColor = 'rgba(0,184,255, 1)';
 
 			myChart.data.labels = tanggal1;
 			myChart.data.datasets[0].data = radiasi1;
-			myChart.data.datasets[0].backgroundColor = bgColor1;
-			myChart.data.datasets[0].borderColor = bdColor1;
+			myChart.data.datasets[0].backgroundColor = 'rgba(251,152,0, 0)';
+			myChart.data.datasets[0].borderColor = 'rgba(251,152,0, 1)';
 
 			myChart.update();
 			document.getElementById("span-rmse").textContent=rmse;
