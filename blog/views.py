@@ -97,14 +97,14 @@ def apiForecastsFilter(request):
 
 def dump_prediksi(request):
     scaler = load(os_join(BASE_DIR, "staticfiles/scaler.gz"))
-    md19 = load_model(os_join(BASE_DIR, "staticfiles/MD19.h5"))
-    radiasi = Radiasi.objects.filter(tanggal__range=('2016-12-16', '2019-12-31')).order_by('tanggal')
+    md43 = load_model(os_join(BASE_DIR, "staticfiles/MD43.h5"))
+    radiasi = Radiasi.objects.filter(tanggal__range=('2016-12-25', '2019-12-31')).order_by('tanggal')
 
     list_radiasi = []
     list_tanggal = []
     for i in range(len(radiasi)):
         list_radiasi.append(radiasi[i].radiasi)
-        if(i>15):
+        if(i>6):
             list_tanggal.append(radiasi[i].tanggal)
     # flatten data
     
@@ -112,9 +112,9 @@ def dump_prediksi(request):
     data = data.reshape(1, -1)
     data = scaler.transform(data)
 
-    X, y = to_supervised(data[0], n_in=16, n_out=1)
+    X, y = to_supervised(data[0], n_in=7, n_out=1)
     
-    Y = md19.predict(X)
+    Y = md43.predict(X)
     
     Y = scaler.inverse_transform(Y)
     print(Y)
