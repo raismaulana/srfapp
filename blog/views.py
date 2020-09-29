@@ -95,6 +95,7 @@ def apiForecastsFilter(request):
 
     return HttpResponse(json.dumps(res, cls=DecimalEncoder), content_type='application/json;charset=utf-8')
 
+
 # def dump_prediksi(request):
 #     scaler = load(os_join(BASE_DIR, "staticfiles/scaler.gz"))
 #     md19 = load_model(os_join(BASE_DIR, "staticfiles/MD19.h5"))

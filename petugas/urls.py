@@ -9,5 +9,4 @@ urlpatterns = [
     path('api/DataRadiasiId', views.getDataRadiasiId, name="apiGetDataRadiasiId"),
     path('InsertRadiasi', views.insertRadiasiBaru, name="insertDataRadiasi"),
     path('UpdateRadiasi', views.updateRadiasi, name="updateDataRadiasi"),
-
 ]
